@@ -11,16 +11,16 @@ type Command = {
 	run: (args: string[], io: Io) => number | Promise<number>
 }
 
-// Add a command here: one entry, one file under src/commands/ when it grows.
-const commands: Record<string, Command> = {
-	version: {
-		summary: "Print the CLI version",
-		run: (_args, io) => {
-			io.out(pkg.version)
-			return 0
-		},
+const version: Command = {
+	summary: "Print the CLI version",
+	run: (_args, io) => {
+		io.out(pkg.version)
+		return 0
 	},
 }
+
+// Add a command here: one entry, one file under src/commands/ when it grows.
+const commands: Record<string, Command> = { version }
 
 function usage(): string {
 	const width = Math.max(...Object.keys(commands).map((name) => name.length))
@@ -42,7 +42,7 @@ export async function run(argv: string[], io: Io): Promise<number> {
 		strict: false,
 	})
 
-	if (values.version) return commands.version!.run([], io)
+	if (values.version) return version.run([], io)
 
 	const [name, ...rest] = positionals
 	if (!name || values.help) {

@@ -7,7 +7,9 @@ bun install
 bun run dev -- --help     # run from source
 bun test
 bun run build             # single-file binary at dist/excited
-bun run check             # typecheck + test + build, what CI runs
+bun run lint              # Biome, zero warnings
+bun run format            # Biome format + import order, writes files
+bun run check             # lint + typecheck + test + build, what CI runs
 ```
 
 ## Adding a command

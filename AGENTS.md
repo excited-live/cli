@@ -10,4 +10,4 @@ Instructions for AI coding agents in `excited-live/cli`.
 4. Keep the CLI deterministic: same input, same output. No hidden state outside what a command documents.
 5. Tax math lives in `@excited-live/tax` (repo `excited-live/tax-core`). Import it; never copy or reimplement tax rules here.
 6. Commands return exit codes through `run()`; only `src/index.ts` calls `process.exit`.
-7. Done means `bun run check` passes (typecheck, tests, compiled build).
+7. Done means `bun run check` passes (Biome lint with zero warnings, strict typecheck, tests, compiled build). `bun run format` fixes formatting and import order. Do not loosen `tsconfig.json` or `biome.json` to make an error go away.
