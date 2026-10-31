@@ -11,3 +11,17 @@ Instructions for AI coding agents in `excited-live/cli`.
 5. Tax math lives in `@excited-live/tax` (repo `excited-live/tax-core`). Import it; never copy or reimplement tax rules here.
 6. Commands return exit codes through `run()`; only `src/index.ts` calls `process.exit`.
 7. Done means `bun run check` passes (Biome lint with zero warnings, strict typecheck, tests, compiled build). `bun run format` fixes formatting and import order. Do not loosen `tsconfig.json` or `biome.json` to make an error go away.
+
+## Agent skills
+
+### Issue tracker
+
+GitHub Issues in `excited-live/cli`, via the `gh` CLI. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Canonical role names: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: `GLOSSARY.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`.
