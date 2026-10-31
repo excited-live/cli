@@ -6,6 +6,7 @@ export interface Io {
 	err: (line: string) => void
 }
 
+/** One entry in the command table. `run` returns the exit code. */
 type Command = {
 	summary: string
 	run: (args: string[], io: Io) => number | Promise<number>
@@ -25,14 +26,14 @@ const commands: Record<string, Command> = { version }
 function usage(): string {
 	const width = Math.max(...Object.keys(commands).map((name) => name.length))
 	const lines = Object.entries(commands).map(
-		([name, cmd]) => `  ${name.padEnd(width)}  ${cmd.summary}`,
+		([name, command]) => `  ${name.padEnd(width)}  ${command.summary}`,
 	)
 	return ["Usage: excited <command> [options]", "", "Commands:", ...lines].join("\n")
 }
 
-/** Runs the CLI and returns the exit code. Never calls process.exit, so tests can drive it. */
-export async function run(argv: string[], io: Io): Promise<number> {
-	const { values, positionals } = parseArgs({
+// strict: false means unknown flags are accepted and ignored instead of throwing.
+function parseFlags(argv: string[]) {
+	return parseArgs({
 		args: argv,
 		options: {
 			help: { type: "boolean", short: "h" },
@@ -41,19 +42,24 @@ export async function run(argv: string[], io: Io): Promise<number> {
 		allowPositionals: true,
 		strict: false,
 	})
+}
 
+/** Runs the CLI and returns the exit code. Never calls process.exit, so tests can drive it. */
+export async function run(argv: string[], io: Io): Promise<number> {
+	const { values, positionals } = parseFlags(argv)
+
+	// --version and --help are checked before any command name is looked up.
 	if (values.version) return version.run([], io)
-
-	const [name, ...rest] = positionals
-	if (!name || values.help) {
+	const [commandName, ...commandArgs] = positionals
+	if (!commandName || values.help) {
 		io.out(usage())
 		return 0
 	}
 
-	const command = commands[name]
+	const command = commands[commandName]
 	if (!command) {
-		io.err(`Unknown command: ${name}\n\n${usage()}`)
+		io.err(`Unknown command: ${commandName}\n\n${usage()}`)
 		return 1
 	}
-	return command.run(rest, io)
+	return command.run(commandArgs, io)
 }
